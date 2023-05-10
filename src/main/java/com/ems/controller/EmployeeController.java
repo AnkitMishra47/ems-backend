@@ -2,6 +2,7 @@ package com.ems.controller;
 
 import com.ems.exception.ResourceNotFoundException;
 import com.ems.model.Employee;
+import com.ems.model.SearchEmployee;
 import com.ems.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,9 +22,9 @@ public class EmployeeController {
     @Autowired
     private EmployeeRepository employeeRepository;
 
-    @GetMapping("/employees")
-    public List<Employee> getAllEmployees(){
-        return employeeRepository.findAll();
+    @PostMapping("/search-employees")
+    public List<Employee> getAllEmployees(@RequestBody SearchEmployee searchEmployee){
+        return employeeRepository.searchWithEmptyKeyword(searchEmployee.getDetails());
     }
     @PostMapping("/employees")
     public ResponseEntity<Employee> createEmployee(@RequestBody Employee employee){
