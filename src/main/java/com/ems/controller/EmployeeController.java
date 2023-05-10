@@ -7,6 +7,7 @@ import com.ems.model.SearchEmployee;
 import com.ems.repository.EmployeeRepository;
 import com.ems.utils.EMSUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,17 +28,14 @@ public class EmployeeController {
         return EMSUtils.getEmployeesDTO(employees);
     }
     @PostMapping("/employees")
-    public ResponseEntity<Employee> createEmployee(@RequestBody EmployeeDTO employeeDTO){
+    public ResponseEntity<String> createEmployee(@RequestBody EmployeeDTO employeeDTO){
 
-        if (employeeDTO.getName() == null){
-            throwFieldNullException("Name");
+        Map<String, Employee> errorMessages = new HashMap<>();
+
+        if (employeeDTO.getName() == null || employeeDTO.getEmail() == null || employeeDTO.getMobile() == null){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mandatoryValidation());
         }
-        if (employeeDTO.getEmail() == null){
-            throwFieldNullException("Email");
-        }
-        if (employeeDTO.getMobile() == null){
-            throwFieldNullException("Mobile");
-        }
+
         Employee employee ;
 
         if (employeeDTO.getId() != null){
@@ -49,7 +47,7 @@ public class EmployeeController {
         }
         employeeRepository.save(employee);
 
-        return ResponseEntity.ok(employee);
+        return ResponseEntity.status(HttpStatus.OK).body("Details Saved Successfully");
     }
 
     @DeleteMapping("/employees/{id}")
@@ -77,7 +75,11 @@ public class EmployeeController {
                 );
     }
 
-    private void throwFieldNullException(String fieldName){
-        throw new NullPointerException("Please enter the value for " + fieldName);
+    private String throwFieldNullException(String fieldName){
+        return "Please enter the value for " + fieldName;
+    }
+
+    private String mandatoryValidation(){
+        return "Please fill all the '*' mandatory fields.";
     }
 }
