@@ -17,7 +17,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/svc/api/")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "*")
 public class EmployeeController {
     @Autowired
     private EmployeeRepository employeeRepository;
