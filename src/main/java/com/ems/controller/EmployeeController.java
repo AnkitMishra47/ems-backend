@@ -47,7 +47,7 @@ public class EmployeeController {
         }
         employeeRepository.save(employee);
 
-        return ResponseEntity.status(HttpStatus.OK).body("Details Saved Successfully");
+        return ResponseEntity.ok("Details Saved Successfully");
     }
 
     @DeleteMapping("/employees/{id}")
