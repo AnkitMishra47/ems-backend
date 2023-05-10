@@ -1,5 +1,6 @@
 package com.ems.model;
 
+import com.ems.model.types.Gender;
 import jakarta.persistence.*;
 import org.springframework.lang.NonNull;
 
@@ -10,9 +11,11 @@ public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
     @Column(name="name")
     @NonNull
     private String name;
+
     @Column(name="email")
     @NonNull
     private String email;
@@ -21,6 +24,19 @@ public class Employee {
     @NonNull
     private String mobile;
 
+    @Column(name = "gender", columnDefinition = "VARCHAR(255)")
+    private String gender;
+
+    public Employee(@NonNull String name, @NonNull String email, @NonNull String mobile, Gender gender) {
+        this.name = name;
+        this.email = email;
+        this.mobile = mobile;
+        this.gender = gender != null ? gender.getValue() : null;
+    }
+
+    public Employee(EmployeeDTO employeeDTO){
+        this(employeeDTO.getName() , employeeDTO.getEmail() , employeeDTO.getMobile() , employeeDTO.getGender() );
+    }
 
     public Employee(String name, String email, String mobile) {
         this.name = name;
@@ -62,5 +78,18 @@ public class Employee {
     public void setMobile(String mobile) {
         this.mobile = mobile;
     }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public void setGender(Gender gender) {
+        this.gender = gender != null ? gender.getValue() : null;
+    }
+
 
 }

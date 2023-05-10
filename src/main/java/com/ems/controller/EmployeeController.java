@@ -2,15 +2,14 @@ package com.ems.controller;
 
 import com.ems.exception.ResourceNotFoundException;
 import com.ems.model.Employee;
+import com.ems.model.EmployeeDTO;
 import com.ems.model.SearchEmployee;
 import com.ems.repository.EmployeeRepository;
+import com.ems.utils.EMSUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.http.HttpClient;
-import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,21 +22,33 @@ public class EmployeeController {
     private EmployeeRepository employeeRepository;
 
     @PostMapping("/search-employees")
-    public List<Employee> getAllEmployees(@RequestBody SearchEmployee searchEmployee){
-        return employeeRepository.searchWithEmptyKeyword(searchEmployee.getDetails());
+    public List<EmployeeDTO> getAllEmployees(@RequestBody SearchEmployee searchEmployee){
+        List<Employee> employees = employeeRepository.searchWithEmptyKeyword(searchEmployee.getDetails());
+        return EMSUtils.getEmployeesDTO(employees);
     }
     @PostMapping("/employees")
-    public ResponseEntity<Employee> createEmployee(@RequestBody Employee employee){
-        if (employee.getName() == null){
+    public ResponseEntity<Employee> createEmployee(@RequestBody EmployeeDTO employeeDTO){
+
+        if (employeeDTO.getName() == null){
             throwFieldNullException("Name");
         }
-        if (employee.getEmail() == null){
+        if (employeeDTO.getEmail() == null){
             throwFieldNullException("Email");
         }
-        if (employee.getMobile() == null){
+        if (employeeDTO.getMobile() == null){
             throwFieldNullException("Mobile");
         }
-        Employee newEmployee =  employeeRepository.save(employee);
+        Employee employee ;
+
+        if (employeeDTO.getId() != null){
+            employee = getEmployeeByID(employeeDTO.getId());
+            employee.setGender(employeeDTO.getGender());
+        }
+        else {
+            employee = new Employee(employeeDTO);
+        }
+        employeeRepository.save(employee);
+
         return ResponseEntity.ok(employee);
     }
 
@@ -50,14 +61,19 @@ public class EmployeeController {
     }
 
     @GetMapping("/employees/{id}")
-    public ResponseEntity<Employee> getEmployeeById(@PathVariable Long id){
-        return ResponseEntity.ok(getEmployeeByID(id));
+    public ResponseEntity<EmployeeDTO> getEmployeeById(@PathVariable Long id){
+        return ResponseEntity.ok(getEmployeeDTOByID(id));
+    }
+
+    private EmployeeDTO getEmployeeDTOByID(Long id){
+        Employee employee = getEmployeeByID(id);
+        return new EmployeeDTO(employee);
     }
 
     private Employee getEmployeeByID(Long id){
         return this.employeeRepository.findById(id)
                 .orElseThrow(
-                    () -> new ResourceNotFoundException("Employee doesn't exist with this id")
+                        () -> new ResourceNotFoundException("Employee doesn't exist with this id")
                 );
     }
 
