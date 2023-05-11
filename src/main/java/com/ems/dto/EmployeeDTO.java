@@ -1,5 +1,6 @@
-package com.ems.model;
+package com.ems.dto;
 
+import com.ems.model.Employee;
 import com.ems.model.types.Gender;
 
 public class EmployeeDTO {

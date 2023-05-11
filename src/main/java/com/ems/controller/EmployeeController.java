@@ -2,7 +2,7 @@ package com.ems.controller;
 
 import com.ems.exception.ResourceNotFoundException;
 import com.ems.model.Employee;
-import com.ems.model.EmployeeDTO;
+import com.ems.dto.EmployeeDTO;
 import com.ems.model.SearchEmployee;
 import com.ems.repository.EmployeeRepository;
 import com.ems.utils.EMSUtils;

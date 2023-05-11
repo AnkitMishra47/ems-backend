@@ -1,5 +1,6 @@
 package com.ems.model;
 
+import com.ems.dto.EmployeeDTO;
 import com.ems.model.types.Gender;
 import jakarta.persistence.*;
 import org.springframework.lang.NonNull;

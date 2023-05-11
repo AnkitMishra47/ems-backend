@@ -1,7 +1,7 @@
 package com.ems.utils;
 
 import com.ems.model.Employee;
-import com.ems.model.EmployeeDTO;
+import com.ems.dto.EmployeeDTO;
 
 import java.util.ArrayList;
 import java.util.List;
