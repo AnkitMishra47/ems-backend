@@ -22,11 +22,11 @@ public class UserRegistrationController {
     @PostMapping("/register")
     public ResponseEntity<Map<String , Object>> registerUserAccount( @RequestBody UserRegistrationDTO userRegistrationDTO){
         User user = userService.saveUser(userRegistrationDTO);
-        Map<String , Object> resposne = new HashMap<>();
-        resposne.put("message" , "User Registered Successfully");
-        resposne.put("ObjectID" , user.getId());
+        Map<String , Object> response = new HashMap<>();
+        response.put("message" , "User Registered Successfully");
+        response.put("ObjectID" , user.getId());
 
-        return ResponseEntity.ok(resposne);
+        return ResponseEntity.ok(response);
     }
 
 
