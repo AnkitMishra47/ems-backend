@@ -14,19 +14,18 @@ import java.util.Map;
 
 @Controller
 @RequestMapping("/svc/api")
-public class UserRegistrationController {
+public class UserController {
+
+    private final UserService userService;
 
     @Autowired
-    private UserService userService ;
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @PostMapping("/register")
     public ResponseEntity<Map<String , Object>> registerUserAccount( @RequestBody UserRegistrationDTO userRegistrationDTO){
-        User user = userService.saveUser(userRegistrationDTO);
-        Map<String , Object> response = new HashMap<>();
-        response.put("message" , "User Registered Successfully");
-        response.put("ObjectID" , user.getId());
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(userService.saveUser(userRegistrationDTO));
     }
 
 

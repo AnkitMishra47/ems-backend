@@ -1,10 +1,11 @@
-package com.ems.services;
+package com.ems.services.impl;
 
 import com.ems.dto.EmployeeDTO;
 import com.ems.exception.ResourceNotFoundException;
 import com.ems.model.Employee;
 import com.ems.model.SearchEmployee;
 import com.ems.repository.EmployeeRepository;
+import com.ems.services.EmployeeService;
 import com.ems.utils.EMSUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class EmployeeServiceImpl implements EmployeeService{
+public class EmployeeServiceImpl implements EmployeeService {
 
     @Autowired
     private EmployeeRepository employeeRepository;
@@ -71,7 +72,6 @@ public class EmployeeServiceImpl implements EmployeeService{
     private Employee getEmployeeByID(Long id){
         return this.employeeRepository.findById(id)
                 .orElseThrow(
-                        () -> new ResourceNotFoundException("Employee doesn't exist with this id")
-                );
+                        () -> new ResourceNotFoundException("Employee doesn't exist with this id"));
     }
 }
