@@ -28,12 +28,13 @@ public class EmployeeController {
         return EMSUtils.getEmployeesDTO(employees);
     }
     @PostMapping("/employees")
-    public ResponseEntity<String> createEmployee(@RequestBody EmployeeDTO employeeDTO){
+    public ResponseEntity<Map<String, Object>> createEmployee(@RequestBody EmployeeDTO employeeDTO){
 
-        Map<String, Employee> errorMessages = new HashMap<>();
+        Map<String, Object> response = new HashMap<>();
 
         if (employeeDTO.getName() == null || employeeDTO.getEmail() == null || employeeDTO.getMobile() == null){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mandatoryValidation());
+            response.put("error" , mandatoryValidation());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
         Employee employee ;
@@ -47,7 +48,9 @@ public class EmployeeController {
         }
         employeeRepository.save(employee);
 
-        return ResponseEntity.ok("Details Saved Successfully");
+        response.put("ObjectID" , employee.getId());
+        response.put("message" , "Details Saved Successfully");
+        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/employees/{id}")
