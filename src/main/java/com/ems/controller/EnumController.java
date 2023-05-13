@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/svc/api/")
-@CrossOrigin(origins = "*")
 public class EnumController {
 
     @GetMapping("/genders")

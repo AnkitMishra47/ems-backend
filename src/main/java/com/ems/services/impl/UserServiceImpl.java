@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,15 +22,14 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private UserRepository userRepository;
-
     @Autowired
-    public UserServiceImpl (UserRepository userRepository){
-        this.userRepository = userRepository;
+    private  UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    public UserServiceImpl(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
     }
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     @Override
     public Map<String , Object> saveUser(UserRegistrationDTO userRegistrationDTO) {
@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
                     userRegistrationDTO.getLastName(),
                     userRegistrationDTO.getUsername() ,
                     passwordEncoder.encode(userRegistrationDTO.getPassword()),
-                    Arrays.asList(new Role("canPreview")));
+                    Arrays.asList(new Role("EMPLOYEE_USER")));
 
             userRepository.save(user);
             response.put("success" , true);
@@ -52,6 +52,7 @@ public class UserServiceImpl implements UserService {
         else
         {
             response.put("success" , false);
+            response.put("message" , "username already exist");
         }
 
         return response;
