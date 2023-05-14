@@ -6,6 +6,8 @@ import com.ems.jwt.JwtAuthTokenFilter;
 import com.ems.jwt.JwtUtils;
 import com.ems.services.UserService;
 import com.ems.services.impl.UserServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,11 +26,15 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFilter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
+
+    private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
     @Autowired
     private JwtUtils jwtUtils;
@@ -45,8 +51,15 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-       http.csrf().disable().authorizeHttpRequests().anyRequest().permitAll();
+        logger.info("JwtAuthTokenFilter: doFilterInternal() method invoked");
 
+       http.csrf().disable().authorizeHttpRequests().anyRequest().permitAll()
+               .and().cors()
+               .and().addFilterBefore(new JwtAuthTokenFilter(jwtUtils , userDetailsService()),
+                       UsernamePasswordAuthenticationFilter.class);
+
+        logger.info("JwtAuthTokenFilter: doFilterInternal() method invoked");
+       
        http.authenticationProvider(daoAuthenticationProvider());
 
        return http.build();

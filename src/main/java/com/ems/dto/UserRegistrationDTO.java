@@ -62,4 +62,12 @@ public class UserRegistrationDTO {
         this.password = password;
         this.username = username;
     }
+
+    public boolean checkAllFieldPresent(){
+        return this.checkLoginFieldsPresent() && this.firstName != null && this.lastName != null;
+    }
+
+    public boolean checkLoginFieldsPresent(){
+        return this.username != null && this.password != null;
+    }
 }

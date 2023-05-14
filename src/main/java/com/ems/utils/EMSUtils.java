@@ -6,6 +6,9 @@ import java.util.List;
 
 public class EMSUtils {
 
+    public static String EMPLOYEE_ROLE  = "EMPLOYEE_ROLE";
+    public static String ADMIN_ROLE     = "ADMIN_ROLE";
+
     public static List<EmployeeDTO> getEmployeesDTO(List<Employee> employees)
     {
         List<EmployeeDTO> employeeDTOs = new ArrayList<>();

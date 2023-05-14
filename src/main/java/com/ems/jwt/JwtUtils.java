@@ -26,8 +26,11 @@ public class JwtUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
-    @Value("${jwt.secret}")
-    private String jwtSecret;
+    private SecretKey jwtSecret = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+
+    public SecretKey getJwtSecret() {
+        return jwtSecret;
+    }
 
     @Value("${jwt.expiration}")
     private int jwtExpirationMs;
@@ -36,12 +39,7 @@ public class JwtUtils {
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-        return Jwts.builder()
-                .setSubject((userDetails.getUsername()))
-                .setIssuedAt(new Date())
-                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
-                .signWith(SignatureAlgorithm.HS512, jwtSecret)
-                .compact();
+        return this.generateToken(userDetails);
     }
 
     public String generateToken(UserDetails userDetails) {
@@ -51,7 +49,7 @@ public class JwtUtils {
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
-                .signWith(SignatureAlgorithm.HS512 , Keys.secretKeyFor(SignatureAlgorithm.HS512))
+                .signWith(jwtSecret)
                 .compact();
     }
 
@@ -62,8 +60,11 @@ public class JwtUtils {
 
     public boolean validateJwtToken(String authToken) {
         try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
-            return true;
+            if (!isTokenExpired(authToken))
+            {
+                Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
+                return true;
+            }
         } catch (Exception e) {
             logger.error("JWT authentication error: {}", e.getMessage());
         }
@@ -75,5 +76,16 @@ public class JwtUtils {
         Claims claims = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
         List<String> roles = (List<String>) claims.get("roles");
         return roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+    }
+
+    public Date getExpirationDateFromToken(String token) {
+        Claims claims = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
+        return claims.getExpiration();
+    }
+
+    public boolean isTokenExpired(String token) {
+        Date expiration = getExpirationDateFromToken(token);
+        logger.info("Date", expiration.toString());
+        return expiration.before(new Date());
     }
 }

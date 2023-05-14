@@ -6,5 +6,5 @@ import java.util.Map;
 
 public interface UserService extends UserDetailsService
 {
-    public Map<String, Object> saveUser(UserRegistrationDTO userRegistrationDTO);
+    public Map<String, Object> saveUser(UserRegistrationDTO userRegistrationDTO, String roleName);
 }

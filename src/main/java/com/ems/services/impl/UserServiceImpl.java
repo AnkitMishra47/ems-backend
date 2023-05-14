@@ -3,6 +3,7 @@ package com.ems.services.impl;
 import com.ems.dto.UserRegistrationDTO;
 import com.ems.model.Role;
 import com.ems.model.User;
+import com.ems.repository.RoleRepository;
 import com.ems.repository.UserRepository;
 import com.ems.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +14,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,6 +23,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private  UserRepository userRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
     public UserServiceImpl(PasswordEncoder passwordEncoder) {
@@ -32,7 +34,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public Map<String , Object> saveUser(UserRegistrationDTO userRegistrationDTO) {
+    public Map<String , Object> saveUser(UserRegistrationDTO userRegistrationDTO , String roleName) {
         String              username                = userRegistrationDTO.getUsername();
         boolean             isUsernameAlreadyExist  = userRepository.findOneByUsername(username) != null;
         Map<String, Object> response                = new HashMap<>();
@@ -43,10 +45,10 @@ public class UserServiceImpl implements UserService {
                     userRegistrationDTO.getFirstName() ,
                     userRegistrationDTO.getLastName(),
                     userRegistrationDTO.getUsername() ,
-                    passwordEncoder.encode(userRegistrationDTO.getPassword()),
-                    Arrays.asList(new Role("EMPLOYEE_USER")));
+                    passwordEncoder.encode(userRegistrationDTO.getPassword()));
 
-            userRepository.save(user);
+            addRoleToUser(user , roleName);
+
             response.put("success" , true);
         }
         else
@@ -74,5 +76,13 @@ public class UserServiceImpl implements UserService {
     public Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles)
     {
         return roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());
+    }
+
+    public void addRoleToUser(User user, String roleName) {
+        Role role = roleRepository.findRoleByName(roleName);
+        if (user != null && role != null) {
+            user.getRoles().add(role);
+            userRepository.save(user);
+        }
     }
 }
