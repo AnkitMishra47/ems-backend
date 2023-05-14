@@ -31,4 +31,9 @@ public class EMSUtils {
         return "Please fill all the '*' mandatory fields.";
     }
 
+    public static String invalid()
+    {
+        return "Invalid Username and Password";
+    }
+
 }

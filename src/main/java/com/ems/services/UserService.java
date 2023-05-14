@@ -7,4 +7,6 @@ import java.util.Map;
 public interface UserService extends UserDetailsService
 {
     public Map<String, Object> saveUser(UserRegistrationDTO userRegistrationDTO, String roleName);
+
+    public boolean validateUser(String username, String password);
 }

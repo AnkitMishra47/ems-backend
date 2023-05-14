@@ -1,5 +1,7 @@
 package com.ems.dto;
 
+import com.ems.model.types.Gender;
+
 public class UserRegistrationDTO {
 
     private String name;
@@ -11,6 +13,7 @@ public class UserRegistrationDTO {
     private String password;
 
     private String username;
+    private Gender gender ;
 
     public UserRegistrationDTO() {
     }

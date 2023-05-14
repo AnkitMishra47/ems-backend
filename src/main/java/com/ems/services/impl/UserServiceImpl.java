@@ -61,14 +61,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public boolean validateUser(String username, String password) {
+        User user = userRepository.findOneByUsername(username);
+        if (user != null && passwordEncoder.matches(password, user.getPassword())) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException
     {
         User user = userRepository.findOneByUsername(username);
-
-        if (user == null)
-        {
-            throw new UsernameNotFoundException("Invalid username and password");
-        }
 
         return new org.springframework.security.core.userdetails.User(user.getUsername() , user.getPassword() , mapRolesToAuthorities(user.getRoles()));
     }

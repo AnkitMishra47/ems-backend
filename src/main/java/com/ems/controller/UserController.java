@@ -56,7 +56,7 @@ public class UserController {
         response = userService.saveUser(userRegistrationDTO , EMSUtils.EMPLOYEE_ROLE);
 
         if (response.get("success") == Boolean.FALSE){
-            response.put("error" , response.get("status"));
+            response.put("error" , response.get("message"));
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
@@ -73,9 +73,14 @@ public class UserController {
         try {
 
             HashMap response = new HashMap();
-            response.put("error" , EMSUtils.mandatoryValidation());
 
             if (!userDTO.checkLoginFieldsPresent()){
+                response.put("error" , EMSUtils.mandatoryValidation());
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+
+            if (!userService.validateUser(userDTO.getUsername() , userDTO.getPassword())){
+                response.put("error" , EMSUtils.invalid());
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
             }
 
