@@ -75,7 +75,11 @@ public class UserServiceImpl implements UserService {
 
     public Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles)
     {
-        return roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());
+        if (roles != null){
+            return roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());
+        }
+
+        return null ;
     }
 
     public void addRoleToUser(User user, String roleName) {

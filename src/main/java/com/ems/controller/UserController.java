@@ -53,7 +53,14 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
-        return ResponseEntity.ok(userService.saveUser(userRegistrationDTO , EMSUtils.EMPLOYEE_ROLE));
+        response = userService.saveUser(userRegistrationDTO , EMSUtils.EMPLOYEE_ROLE);
+
+        if (response.get("success") == Boolean.FALSE){
+            response.put("error" , response.get("status"));
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+        return ResponseEntity.ok(response);
     }
 
     public Authentication getUser() {
