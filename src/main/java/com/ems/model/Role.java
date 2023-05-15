@@ -3,6 +3,10 @@ package com.ems.model;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+
 @Entity
 @Table(name="ems_role")
 public class Role {
@@ -12,6 +16,9 @@ public class Role {
     private Long id ;
 
     private String name ;
+
+    @ManyToMany(mappedBy = "roles")
+    private Collection<User> users = new ArrayList<>();
 
     public Role() {
     }

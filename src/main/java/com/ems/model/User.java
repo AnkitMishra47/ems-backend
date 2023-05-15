@@ -2,6 +2,7 @@ package com.ems.model;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 
@@ -34,11 +35,11 @@ public class User {
 
 //    private Collection<Privilege> privileges;
 
-    @ManyToMany(fetch = FetchType.EAGER , cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "ems_users_roles",
-    joinColumns = @JoinColumn(name = "user_id" ,  referencedColumnName = "id") ,
-    inverseJoinColumns = @JoinColumn(name = "role_id" ,  referencedColumnName = "id"))
-    private Collection<Role> roles ;
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Collection<Role> roles = new ArrayList<>();
 
 
     public User(String firstname, String lastname, String username, String password, Collection<Role> roles) {
@@ -92,30 +93,19 @@ public class User {
         this.password = password;
     }
 
-//    public Collection<Privilege> getPrivileges() {
-//        return privileges;
-//    }
-
-//    public void setPrivileges(Collection<Privilege> privileges) {
-//        this.privileges = privileges;
-//    }
-
     public Collection<Role> getRoles() {
         return roles;
+    }
+
+    public String getName(){
+
+        return this.firstname + " " + this.lastname;
     }
 
     public void setRoles(Collection<Role> roles) {
         this.roles = roles;
     }
 
-//    public User(String firstname, String lastname, String username, String password, Collection<Privilege> privileges, Collection<Role> roles) {
-//        this.firstname = firstname;
-//        this.lastname = lastname;
-//        this.username = username;
-//        this.password = password;
-//        this.privileges = privileges;
-//        this.roles = roles;
-//    }
 
 
 

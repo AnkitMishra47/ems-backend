@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
@@ -23,7 +24,6 @@ public class JwtAuthTokenFilter extends OncePerRequestFilter {
 
     @Autowired
     public JwtAuthTokenFilter(JwtUtils jwtUtils , UserDetailsService userDetailsService){
-        logger.info("JwtAuthTokenFilter initialized");
         this.jwtUtils = jwtUtils ;
         this.userDetailsService = userDetailsService;
     }
@@ -33,19 +33,16 @@ public class JwtAuthTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException, ServletException {
         try {
-            logger.info("doFilterInternal: doFilterInternal() method invoked");
-
-
                 String jwt = parseJwt(request);
 
-                logger.info("jwt" , jwt);
                 if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
 
                     String username = jwtUtils.getUserNameFromJwtToken(jwt);
-                    logger.info("username" , username);
+
+                    UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                            username, null, jwtUtils.getRolesFromJwtToken(jwt));
+                            userDetails, null, userDetails.getAuthorities());
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
                 else {

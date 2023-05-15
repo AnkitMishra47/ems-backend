@@ -51,15 +51,11 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        logger.info("JwtAuthTokenFilter: doFilterInternal() method invoked");
-
        http.csrf().disable().authorizeHttpRequests().anyRequest().permitAll()
                .and().cors()
                .and().addFilterBefore(new JwtAuthTokenFilter(jwtUtils , userDetailsService()),
                        UsernamePasswordAuthenticationFilter.class);
 
-        logger.info("JwtAuthTokenFilter: doFilterInternal() method invoked");
-       
        http.authenticationProvider(daoAuthenticationProvider());
 
        return http.build();

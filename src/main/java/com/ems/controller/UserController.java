@@ -1,14 +1,14 @@
 package com.ems.controller;
 
 
+import com.ems.dto.LoggedInUserDTO;
 import com.ems.dto.UserRegistrationDTO;
-import com.ems.jwt.AuthenticationResponse;
 import com.ems.jwt.JwtAuthTokenFilter;
 import com.ems.jwt.JwtUtils;
+import com.ems.model.User;
 import com.ems.services.UserService;
 import com.ems.utils.EMSUtils;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +53,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
         }
 
-        response = userService.saveUser(userRegistrationDTO , EMSUtils.EMPLOYEE_ROLE);
+        response = userService.saveUser(userRegistrationDTO , EMSUtils.ADMIN_ROLE);
 
         if (response.get("success") == Boolean.FALSE){
             response.put("error" , response.get("message"));
@@ -100,14 +100,34 @@ public class UserController {
 
     @GetMapping("/EnvironmentInformation")
     public ResponseEntity<?> getEnvironmentInformation(){
-        logger.info("Environment called");
 
-        if (getUser() == null){
+        Authentication authentication = getUser();
+
+        if (authentication == null){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Session Expired");
         }
 
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
         Map map = new HashMap();
         map.put("result", "ok");
+
+        String username = userDetails.getUsername();
+
+        logger.info("name" , username);
+
+        User newUser = userService.findByUsername(username);
+
+        logger.info("newUser" , newUser);
+
+
+        if (newUser != null){
+            logger.info("newUser" , newUser.toString());
+
+            LoggedInUserDTO loggedInUserDTO = new LoggedInUserDTO(newUser);
+            map.put("user" , loggedInUserDTO);
+        }
+
         return ResponseEntity.ok(map);
     }
 }
