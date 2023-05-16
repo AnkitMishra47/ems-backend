@@ -88,6 +88,11 @@ public class JwtUtils {
     public boolean isTokenExpired(String token) {
         Date expiration = getExpirationDateFromToken(token);
         logger.info("Date", expiration.toString());
+
+        if (expiration == null) {
+            return true;
+        }
+
         return expiration.before(new Date());
     }
 }
