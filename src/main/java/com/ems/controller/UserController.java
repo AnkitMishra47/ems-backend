@@ -99,8 +99,8 @@ public class UserController {
     }
 
     @GetMapping("/EnvironmentInformation")
-    public ResponseEntity<?> getEnvironmentInformation(){
-
+    public ResponseEntity<?> getEnvironmentInformation()
+    {
         Authentication authentication = getUser();
 
         if (authentication == null){
@@ -112,18 +112,10 @@ public class UserController {
         Map map = new HashMap();
         map.put("result", "ok");
 
-        String username = userDetails.getUsername();
-
-        logger.info("name" , username);
-
-        User newUser = userService.findByUsername(username);
-
-        logger.info("newUser" , newUser);
-
+        String  username    = userDetails.getUsername();
+        User    newUser     = userService.findByUsername(username);
 
         if (newUser != null){
-            logger.info("newUser" , newUser.toString());
-
             LoggedInUserDTO loggedInUserDTO = new LoggedInUserDTO(newUser);
             map.put("user" , loggedInUserDTO);
         }
