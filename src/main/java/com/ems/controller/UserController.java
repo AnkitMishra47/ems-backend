@@ -43,7 +43,6 @@ public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(JwtAuthTokenFilter.class);
 
 
-
     @PostMapping("/register")
     public ResponseEntity<Map<String , Object>> registerUserAccount( @RequestBody UserRegistrationDTO userRegistrationDTO){
         Map response = new HashMap<>();
@@ -116,8 +115,7 @@ public class UserController {
         User    newUser     = userService.findByUsername(username);
 
         if (newUser != null){
-            LoggedInUserDTO loggedInUserDTO = new LoggedInUserDTO(newUser);
-            map.put("user" , loggedInUserDTO);
+            map.put("user" , newUser);
         }
 
         return ResponseEntity.ok(map);

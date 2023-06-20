@@ -53,8 +53,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
        http.csrf().disable().authorizeHttpRequests().anyRequest().permitAll()
                .and().cors()
-               .and().addFilterBefore(new JwtAuthTokenFilter(jwtUtils , userDetailsService()),
-                       UsernamePasswordAuthenticationFilter.class);
+               .and().addFilterBefore(authenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
        http.authenticationProvider(daoAuthenticationProvider());
 

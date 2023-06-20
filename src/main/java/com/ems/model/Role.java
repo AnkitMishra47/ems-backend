@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 
 @Entity
 @Table(name="ems_role")

@@ -1,5 +1,6 @@
 package com.ems.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ public class User {
     private String username;
 
     @Column(name = "password")
+    @JsonIgnore
     private String password;
 
 //    private Collection<Privilege> privileges;
